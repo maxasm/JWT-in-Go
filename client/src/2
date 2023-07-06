@@ -1,0 +1,103 @@
+import Stack from "@mui/material/Stack"
+import TextField from "@mui/material/TextField"
+import Button from "@mui/material/Button"
+import InputAdornment from "@mui/material/InputAdornment"
+import Visibility from "@mui/icons-material/Visibility"
+import VisibilityOff from "@mui/icons-material/VisibilityOff"
+import IconButton from "@mui/material/IconButton"
+import OutlinedInput from "@mui/material/OutlinedInput"
+import FormControl from "@mui/material/FormControl"
+import InputLabel from "@mui/material/InputLabel"
+import Snackbar from "@mui/material/Snackbar"
+
+// colors
+import blue from "@mui/material/colors/blue"
+
+import {useState} from "react"
+
+
+const Login = ()=> {
+// hide/show password
+const [hide,updateHide] = useState(true)
+
+// username and password
+const [username,updateUsername] = useState("")
+const [password,updatePassword] = useState("")
+// state for the snackbar
+const [open,updateOpen] = useState(false)
+const [snackbar_msg, updateSnackbar_msg] = useState("")
+
+function handleUpdateUsername(e) {
+	updateUsername(e.target.value)
+}
+
+function handleUpdatePassword(e) {
+	updatePassword(e.target.value)
+}
+
+// Login using username and password
+async function handleLogin() {
+	const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+	});
+
+	msg = await response.text()
+	updateOpen(!open)	
+	updateSnackbar_msg(msg)
+}
+
+
+// Signup using username and password
+async function handleSignup() {
+	const response = await fetch('/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+	});
+
+	console.log(response)
+}
+	
+return (
+	<Stack spacing={4} sx={{width: 400, margin:"100px auto", padding: "20px", border: `2px solid ${blue[400]}`,borderRadius:"4px"}}>
+		<TextField
+			onChange={handleUpdateUsername}
+			value={username}
+			label="Username"
+			variant="outlined"/>
+		<FormControl>
+			<InputLabel>Password</InputLabel>
+			<OutlinedInput
+				onChange={handleUpdatePassword}
+				value={password}
+				variant="outlined"
+				label="Password"
+				type= { hide ? "password" : "text" }
+				endAdornment={
+					<InputAdornment position="end">
+						<IconButton onClick={()=> {updateHide(!hide)}}>
+							{hide ? <VisibilityOff /> : <Visibility />}
+						</IconButton>
+					</InputAdornment>}/>
+		</FormControl>
+			<Stack spacing={2} direction="row">
+				<Button onClick={handleLogin} variant="outlined">Log In</Button>
+				<Button onClick={handleSignup} variant="outlined">Sign Up</Button>
+			</Stack>
+	</Stack>
+	<Snackbar
+		open={open}
+		autoHideDuration={6000}
+		message={snackbar_msg}
+	/>
+)
+
+}
+
+export default Login;
