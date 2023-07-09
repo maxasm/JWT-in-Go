@@ -10,6 +10,8 @@ import FormControl from "@mui/material/FormControl"
 import InputLabel from "@mui/material/InputLabel"
 import Snackbar from "@mui/material/Snackbar"
 
+// routing
+import {useLocation} from "wouter"
 // colors
 import blue from "@mui/material/colors/blue"
 
@@ -32,9 +34,12 @@ function handleUpdatePassword(e) {
 	updatePassword(e.target.value)
 }
 
+// routing
+const [location,updateLocation] = useLocation()
+
 // Login using username and password
 async function handleLogin() {
-	const response = await fetch('/login', {
+	const response = await fetch('/api_login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,12 +49,17 @@ async function handleLogin() {
 
 	let msg = await response.text()
 	msg && alert(msg)
+	
+	if (response.status == 200) {
+		// navigate to the user page
+		updateLocation(`/users/${username}`)
+	}
 }
 
 
 // Signup using username and password
 async function handleSignup() {
-	const response = await fetch('/signup', {
+	const response = await fetch('/api_signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
